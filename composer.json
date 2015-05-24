@@ -14,5 +14,6 @@
             "email": "parker@parkersmith.us"
         }
     ],
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "autoload": {"psr-0": {"": "src"}}
 }

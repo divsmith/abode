@@ -11,4 +11,9 @@ class AbodeSpec extends ObjectBehavior
     {
         $this->shouldHaveType('Abode\Abode');
     }
+
+    function it_extends_HttpKernelInterface()
+    {
+    	$this->shouldHaveType('Symfony\Component\HttpKernel\HttpKernelInterface');
+    }
 }

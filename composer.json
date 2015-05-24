@@ -2,7 +2,8 @@
     "name": "divsmith/abode",
     "description": "StackPHP Multitenant Middleware",
     "require": {
-        "symfony/http-kernel": "^3.0@dev"
+        "symfony/http-foundation": "2.6.*",
+        "symfony/http-kernel": "2.6.*"
     },
     "require-dev": {
         "phpspec/phpspec": "^2.2@dev"

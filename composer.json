@@ -16,5 +16,9 @@
         }
     ],
     "minimum-stability": "dev",
-    "autoload": {"psr-0": {"": "src"}}
+    "autoload": {
+        "psr-4": {
+            "Abode\\": "src/"
+        }
+    }
 }

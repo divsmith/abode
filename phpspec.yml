@@ -1,0 +1,6 @@
+suites:
+    my_suite:
+        namespace: Abode
+        psr4_prefix: Abode
+        src_path: src
+        spec_prefix: spec

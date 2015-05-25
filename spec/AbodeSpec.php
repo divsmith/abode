@@ -6,8 +6,10 @@ use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Abode\ValidatesRequest;
 use Abode\HandlesValidationFailure;
+use Closure;
 
 class AbodeSpec extends ObjectBehavior
 {
@@ -84,5 +86,26 @@ class AbodeSpec extends ObjectBehavior
     	$handler->handle($request)->willReturn('failure');
 
     	$this->handle($request)->shouldReturn('failure');
+    }
+
+    function it_allows_a_closure_to_be_used_to_handle_success(HttpKernelInterface       $app, 
+                                                              Request                     $request, 
+                                                              ValidatesRequest        $validator, 
+                                                              HandlesValidationFailure    $handler)
+    {
+        $this->beConstructedWith($app, $validator, $handler);
+
+        $validator->validate($request)->willReturn(true);
+        $app->handle()->shouldNotBeCalled();
+        $handler->handle()->shouldNotBeCalled();
+        $response = new Response('success');
+
+        $closure = function($request) use ($request, $response)
+        {
+            return $response;
+        };
+
+        $this->setClosure($closure);
+        $this->handle($request)->shouldReturn($response);
     }
 }

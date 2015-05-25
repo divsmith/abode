@@ -4,6 +4,7 @@ namespace Abode;
 
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Closure;
 
 class Abode implements HttpKernelInterface
 {
@@ -26,9 +27,18 @@ class Abode implements HttpKernelInterface
 	{
 		if ( $this->validator->validate($request))
 		{
+			if ( is_callable($this->app))
+			{
+				return call_user_func($this->app, $request);
+			}
 			return $this->app->handle($request);
 		}
 
 		return $this->handler->handle($request);
 	}
+
+    public function setClosure(Closure $closure)
+    {
+        $this->app = $closure;
+    }
 }

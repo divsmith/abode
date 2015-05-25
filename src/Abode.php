@@ -14,27 +14,33 @@ class Abode implements HttpKernelInterface
 
 	protected $handler;
 
-	private function __construct($app, ValidatesRequest $validator, HandlesValidationFailure $handler)
+	public static function withHttpKernelInterface(HttpKernelInterface $app, ValidatesRequest $validator, HandlesValidationFailure $handler)
 	{
-		$this->app = $app;
+		$abode = new Abode();
+		$abode->setHttpKernelInterface($app);
+		$abode->setRequestValidator($validator);
+		$abode->setFailureHandler($handler);
 
-		$this->validator = $validator;
-
-		$this->handler = $handler;
+		return $abode;
 	}
 
-	public static function withHttpKernelInterface(HttpKernelInterface $app, ValidatesRequest $request, HandlesValidationFailure $handler)
+	public static function withClosure(Closure $app, ValidatesRequest $validator, HandlesValidationFailure $handler)
 	{
-		return new Abode($app, $request, $handler);
-	}
+		$abode = new Abode();
+		$abode->setClosure($app);
+		$abode->setRequestValidator($validator);
+		$abode->setFailureHandler($handler);
 
-	public static function withClosure(Closure $app, ValidatesRequest $request, HandlesValidationFailure $handler)
-	{
-		return new Abode($app, $request, $handler);
+		return $abode;
 	}
 
 	public function handle(Request $request, $type = self::MASTER_REQUEST, $catch = true)
 	{
+		if ( ! $this->app || ! $this->validator || ! $this->handler )
+		{
+			throw new \Exception('All required inputs not set');
+		}
+
 		if ( $this->validator->validate($request))
 		{
 			if ( is_callable($this->app))
@@ -46,4 +52,29 @@ class Abode implements HttpKernelInterface
 
 		return $this->handler->handle($request);
 	}
+
+    public static function plain()
+    {
+        return new Abode();
+    }
+
+    public function setHttpKernelInterface(HttpKernelInterface $app)
+    {
+    	$this->app = $app;
+    }
+
+    public function setClosure(Closure $closure)
+    {
+    	$this->app = $closure;
+    }
+
+    public function setRequestValidator(ValidatesRequest $validator)
+    {
+    	$this->validator = $validator;
+    }
+
+    public function setFailureHandler(HandlesValidationFailure $handler)
+    {
+    	$this->handler = $handler;
+    }
 }

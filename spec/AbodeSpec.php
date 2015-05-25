@@ -107,4 +107,40 @@ class AbodeSpec extends ObjectBehavior
     
         $this->handle($request)->shouldReturn($response);
     }
+
+    function it_throws_exception_if_plain_constructor_used_and_no_closure_or_HttpKernelInterface_set_before_handling(Request $request, 
+                                                                                                                    ValidatesRequest $validator, 
+                                                                                                                    HandlesValidationFailure $handler)
+    {
+        $this->beConstructedThrough('plain');
+
+        $this->setRequestValidator($validator);
+        $this->setFailureHandler($handler);
+
+        $this->shouldThrow('\Exception')->duringHandle($request);
+    }
+
+    function it_throws_exception_if_plain_constructor_used_and_no_request_validator_set_before_handling(HttpKernelInterface       $app, 
+                                                                                                          Request                     $request,                                                                                                       
+                                                                                                          HandlesValidationFailure    $handler)
+    {
+        $this->beConstructedThrough('plain');
+
+        $this->setHttpKernelInterface($app);
+        $this->setFailureHandler($handler);
+
+        $this->shouldThrow('\Exception')->duringHandle($request);
+    }
+
+    function it_throws_exception_if_plain_constructor_used_and_no_failure_handler_set_before_handling(HttpKernelInterface       $app, 
+                                                                                                          Request                     $request, 
+                                                                                                          ValidatesRequest        $validator)
+    {
+        $this->beConstructedThrough('plain');
+
+        $this->setHttpKernelInterface($app);
+        $this->setRequestValidator($validator);
+
+        $this->shouldThrow('\Exception')->duringHandle($request);
+    }
 }

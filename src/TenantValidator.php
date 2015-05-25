@@ -2,9 +2,7 @@
 
 use Symfony\Component\HttpFoundation\Request;
 
-interface TenantHandler
+interface TenantValidator
 {
 	public function validate(Request $request);
-
-	public function failed();
 }

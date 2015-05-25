@@ -2,7 +2,7 @@
 
 use Symfony\Component\HttpFoundation\Request;
 
-interface ValidatesTenantUser
+interface ValidatesRequest
 {
 	public function validate(Request $request);
 }

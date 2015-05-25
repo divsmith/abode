@@ -6,12 +6,12 @@ use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Abode\ValidatesTenantUser;
+use Abode\ValidatesRequest;
 use Abode\HandlesValidationFailure;
 
 class AbodeSpec extends ObjectBehavior
 {
-	function let(HttpKernelInterface $app, ValidatesTenantUser $validator, HandlesValidationFailure $handler)
+	function let(HttpKernelInterface $app, ValidatesRequest $validator, HandlesValidationFailure $handler)
 	{
 		$this->beConstructedWith($app, $validator, $handler);
 	}
@@ -28,7 +28,7 @@ class AbodeSpec extends ObjectBehavior
 
     function it_calls_handle_on_next_layer_when_validation_passes(	HttpKernelInterface 		$app, 
     																Request 					$request, 
-    																ValidatesTenantUser 		$validator, 
+    																ValidatesRequest 		$validator, 
     																HandlesValidationFailure 	$handler)
     {
     	$this->beConstructedWith($app, $validator, $handler);
@@ -44,7 +44,7 @@ class AbodeSpec extends ObjectBehavior
 
     function it_calls_failed_on_handler_when_validation_fails(  HttpKernelInterface 		$app, 
     															Request 					$request, 
-    															ValidatesTenantUser 		$validator, 
+    															ValidatesRequest 		$validator, 
     															HandlesValidationFailure 	$handler)
     {
     	$this->beConstructedWith($app, $validator, $handler);
@@ -60,7 +60,7 @@ class AbodeSpec extends ObjectBehavior
 
     function it_returns_value_from_app_handle_when_validation_passes( 	HttpKernelInterface 		$app, 
     																	Request 					$request, 
-    																	ValidatesTenantUser 		$validator, 
+    																	ValidatesRequest 		$validator, 
     																	HandlesValidationFailure 	$handler)
     {
     	$this->beConstructedWith($app, $validator, $handler);
@@ -74,7 +74,7 @@ class AbodeSpec extends ObjectBehavior
 
     function it_returns_value_from_HandlesValidationFailure_handle_when_validation_passes( 	HttpKernelInterface 		$app, 
     																						Request 					$request, 
-    																						ValidatesTenantUser 		$validator, 
+    																						ValidatesRequest 		$validator, 
     																						HandlesValidationFailure 	$handler)
     {
     	$this->beConstructedWith($app, $validator, $handler);

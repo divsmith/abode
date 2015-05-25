@@ -13,7 +13,7 @@ class Abode implements HttpKernelInterface
 
 	protected $handler;
 
-	public function __construct(HttpKernelInterface $app, ValidatesTenantUser $validator, HandlesValidationFailure $handler)
+	public function __construct(HttpKernelInterface $app, ValidatesRequest $validator, HandlesValidationFailure $handler)
 	{
 		$this->app = $app;
 

@@ -15,7 +15,7 @@ class AbodeSpec extends ObjectBehavior
 {
 	function let(HttpKernelInterface $app, ValidatesRequest $validator, HandlesValidationFailure $handler)
 	{
-		$this->beConstructedWith($app, $validator, $handler);
+        $this->beConstructedThrough('withHttpKernelInterface', [$app, $validator, $handler]);
 	}
 
     function it_is_initializable()
@@ -33,7 +33,7 @@ class AbodeSpec extends ObjectBehavior
     																ValidatesRequest 		$validator, 
     																HandlesValidationFailure 	$handler)
     {
-    	$this->beConstructedWith($app, $validator, $handler);
+    	$this->beConstructedThrough('withHttpKernelInterface', [$app, $validator, $handler]);
 
     	$validator->validate($request)->willReturn(true);
 
@@ -49,7 +49,7 @@ class AbodeSpec extends ObjectBehavior
     															ValidatesRequest 		$validator, 
     															HandlesValidationFailure 	$handler)
     {
-    	$this->beConstructedWith($app, $validator, $handler);
+    	$this->beConstructedThrough('withHttpKernelInterface', [$app, $validator, $handler]);
 
     	$validator->validate($request)->willReturn(false);
 
@@ -65,7 +65,7 @@ class AbodeSpec extends ObjectBehavior
     																	ValidatesRequest 		$validator, 
     																	HandlesValidationFailure 	$handler)
     {
-    	$this->beConstructedWith($app, $validator, $handler);
+    	$this->beConstructedThrough('withHttpKernelInterface', [$app, $validator, $handler]);
 
     	$validator->validate($request)->willReturn(true);
 
@@ -79,7 +79,7 @@ class AbodeSpec extends ObjectBehavior
     																						ValidatesRequest 		$validator, 
     																						HandlesValidationFailure 	$handler)
     {
-    	$this->beConstructedWith($app, $validator, $handler);
+    	$this->beConstructedThrough('withHttpKernelInterface', [$app, $validator, $handler]);
 
     	$validator->validate($request)->willReturn(false);
 
@@ -93,19 +93,18 @@ class AbodeSpec extends ObjectBehavior
                                                               ValidatesRequest        $validator, 
                                                               HandlesValidationFailure    $handler)
     {
-        $this->beConstructedWith($app, $validator, $handler);
-
-        $validator->validate($request)->willReturn(true);
-        $app->handle()->shouldNotBeCalled();
-        $handler->handle()->shouldNotBeCalled();
         $response = new Response('success');
-
         $closure = function($request) use ($request, $response)
         {
             return $response;
         };
 
-        $this->setClosure($closure);
+        $this->beConstructedThrough('withClosure', [$closure, $validator, $handler]);
+
+        $validator->validate($request)->willReturn(true);
+        $app->handle()->shouldNotBeCalled();
+        $handler->handle()->shouldNotBeCalled();
+    
         $this->handle($request)->shouldReturn($response);
     }
 }

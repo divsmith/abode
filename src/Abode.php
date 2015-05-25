@@ -14,13 +14,23 @@ class Abode implements HttpKernelInterface
 
 	protected $handler;
 
-	public function __construct(HttpKernelInterface $app, ValidatesRequest $validator, HandlesValidationFailure $handler)
+	private function __construct($app, ValidatesRequest $validator, HandlesValidationFailure $handler)
 	{
 		$this->app = $app;
 
 		$this->validator = $validator;
 
 		$this->handler = $handler;
+	}
+
+	public static function withHttpKernelInterface(HttpKernelInterface $app, ValidatesRequest $request, HandlesValidationFailure $handler)
+	{
+		return new Abode($app, $request, $handler);
+	}
+
+	public static function withClosure(Closure $app, ValidatesRequest $request, HandlesValidationFailure $handler)
+	{
+		return new Abode($app, $request, $handler);
 	}
 
 	public function handle(Request $request, $type = self::MASTER_REQUEST, $catch = true)
@@ -36,9 +46,4 @@ class Abode implements HttpKernelInterface
 
 		return $this->handler->handle($request);
 	}
-
-    public function setClosure(Closure $closure)
-    {
-        $this->app = $closure;
-    }
 }

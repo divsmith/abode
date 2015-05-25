@@ -6,13 +6,14 @@ use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Abode\TenantHandler;
+use Abode\ValidatesTenantUser;
+use Abode\HandlesValidationFailure;
 
 class AbodeSpec extends ObjectBehavior
 {
-	function let(HttpKernelInterface $app, TenantHandler $handler)
+	function let(HttpKernelInterface $app, ValidatesTenantUser $validator, HandlesValidationFailure $handler)
 	{
-		$this->beConstructedWith($app, $handler);
+		$this->beConstructedWith($app, $validator, $handler);
 	}
 
     function it_is_initializable()
@@ -25,27 +26,63 @@ class AbodeSpec extends ObjectBehavior
     	$this->shouldHaveType('Symfony\Component\HttpKernel\HttpKernelInterface');
     }
 
-    function it_calls_handle_on_next_layer_when_validation_passes(HttpKernelInterface $app, Request $request, TenantHandler $handler)
+    function it_calls_handle_on_next_layer_when_validation_passes(	HttpKernelInterface 		$app, 
+    																Request 					$request, 
+    																ValidatesTenantUser 		$validator, 
+    																HandlesValidationFailure 	$handler)
     {
-    	$this->beConstructedWith($app, $handler);
+    	$this->beConstructedWith($app, $validator, $handler);
 
-    	$handler->validate($request)->willReturn(true);
+    	$validator->validate($request)->willReturn(true);
 
     	$app->handle($request)->shouldBeCalled();
+
+    	$handler->handle($request)->shouldNotBeCalled();
 
     	$this->handle($request);
     }
 
-    function it_calls_failed_on_handler_when_validation_fails(HttpKernelInterface $app, Request $request, TenantHandler $handler)
+    function it_calls_failed_on_handler_when_validation_fails(  HttpKernelInterface 		$app, 
+    															Request 					$request, 
+    															ValidatesTenantUser 		$validator, 
+    															HandlesValidationFailure 	$handler)
     {
-    	$this->beConstructedWith($app, $handler);
+    	$this->beConstructedWith($app, $validator, $handler);
 
-    	$handler->validate($request)->willReturn(false);
+    	$validator->validate($request)->willReturn(false);
 
     	$app->handle($request)->shouldNotBeCalled();
 
-    	$handler->failed()->shouldBeCalled();
+    	$handler->handle($request)->shouldBeCalled();
 
     	$this->handle($request);
+    }
+
+    function it_returns_value_from_app_handle_when_validation_passes( 	HttpKernelInterface 		$app, 
+    																	Request 					$request, 
+    																	ValidatesTenantUser 		$validator, 
+    																	HandlesValidationFailure 	$handler)
+    {
+    	$this->beConstructedWith($app, $validator, $handler);
+
+    	$validator->validate($request)->willReturn(true);
+
+    	$app->handle($request)->willReturn('success');
+
+    	$this->handle($request)->shouldReturn('success');
+    }
+
+    function it_returns_value_from_HandlesValidationFailure_handle_when_validation_passes( 	HttpKernelInterface 		$app, 
+    																						Request 					$request, 
+    																						ValidatesTenantUser 		$validator, 
+    																						HandlesValidationFailure 	$handler)
+    {
+    	$this->beConstructedWith($app, $validator, $handler);
+
+    	$validator->validate($request)->willReturn(false);
+
+    	$handler->handle($request)->willReturn('failure');
+
+    	$this->handle($request)->shouldReturn('failure');
     }
 }

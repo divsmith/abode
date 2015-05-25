@@ -9,22 +9,26 @@ class Abode implements HttpKernelInterface
 {
 	protected $app;
 
+	protected $validator;
+
 	protected $handler;
 
-	public function __construct(HttpKernelInterface $app, TenantHandler $handler)
+	public function __construct(HttpKernelInterface $app, ValidatesTenantUser $validator, HandlesValidationFailure $handler)
 	{
 		$this->app = $app;
+
+		$this->validator = $validator;
 
 		$this->handler = $handler;
 	}
 
 	public function handle(Request $request, $type = self::MASTER_REQUEST, $catch = true)
 	{
-		if ( $this->handler->validate($request))
+		if ( $this->validator->validate($request))
 		{
 			return $this->app->handle($request);
 		}
 
-		return $this->handler->failed();
+		return $this->handler->handle($request);
 	}
 }
